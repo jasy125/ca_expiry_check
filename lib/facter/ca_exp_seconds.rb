@@ -1,8 +1,14 @@
+require 'openssl'
+require 'time'
+
 Facter.add(:ca_exp_seconds) do
+  ca_file = '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
   confine do
-    File.exist? '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
+    File.exist? ca_file
   end
   setcode do
-    Facter::Core::Execution.execute('/bin/expr $(/bin/date \'+%s\' -d "$(/opt/puppetlabs/puppet/bin/openssl x509 -enddate -noout -in /etc/puppetlabs/puppet/ssl/certs/ca.pem | /bin/sed -r \'s/.{9}//\')") - $(/bin/date \'+%s\') ').to_i
+    raw_ca_cert = File.read ca_file
+    certificate = OpenSSL::X509::Certificate.new raw_ca_cert
+    certificate.not_after - Time.now
   end
 end
