@@ -1,8 +1,11 @@
 Facter.add(:ca_exp_date) do
+  ca_file = '/etc/puppetlabs/puppet/ssl/ca/ca_crt.pem'
   confine do
-    File.exist? '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
+    File.exist? ca_file
   end
   setcode do
-    Facter::Core::Execution.execute('/opt/puppetlabs/puppet/bin/openssl x509 -enddate -noout -in /etc/puppetlabs/puppet/ssl/certs/ca.pem | sed -r \'s/.{9}//\'')
+    raw_ca_cert = File.read ca_file
+    certificate = OpenSSL::X509::Certificate.new raw_ca_cert
+    certificate.not_after
   end
 end
