@@ -8,7 +8,7 @@ Facter.add(:ca_exp_date) do
       result = Facter::Core::Execution.execute('/opt/puppetlabs/puppet/bin/openssl x509 -enddate -noout -in /etc/puppetlabs/puppet/ssl/ca/ca_crt.pem')
       enddate = result.split('=')
       if enddate.empty?
-         Facter.warn("No enddate found in #{result}')
+         Facter.warn("No enddate found in #{result}")
       else
         enddate[1]
       end
