@@ -1,3 +1,6 @@
+require 'openssl'
+require 'time'
+
 Facter.add(:ca_exp_date) do
   ca_file = '/etc/puppetlabs/puppet/ssl/ca/ca_crt.pem'
   confine do
