@@ -1,14 +1,19 @@
-require 'openssl'
-require 'time'
-
 Facter.add(:ca_exp_date) do
-  ca_file = '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
   confine do
-    File.exist? ca_file
+    File.exist? '/etc/puppetlabs/puppet/ssl/ca/ca_crt.pem'
   end
+
   setcode do
-    raw_ca_cert = File.read ca_file
-    certificate = OpenSSL::X509::Certificate.new raw_ca_cert
-    certificate.not_after
+    begin
+      result = Facter::Core::Execution.execute('/opt/puppetlabs/puppet/bin/openssl x509 -enddate -noout -in /etc/puppetlabs/puppet/ssl/ca/ca_crt.pem')
+      enddate = result.split('=')
+      if enddate.empty?
+         Facter.warn("No enddate found in #{result}')
+      else
+        enddate[1]
+      end
+    rescue Facter::Core::Execution::ExecutionFailure
+      Facter.warn('Unable to execute the openssl command to check enddate')
+    end
   end
 end
