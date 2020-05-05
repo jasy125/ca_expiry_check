@@ -11,7 +11,7 @@ class ca_expiry_check (
 
 
 if $facts[ca_exp_seconds] < $ca_expiry_check::alertwindow {
-  notify {"Puppet CA expiring on ${facts['ca_exp_date']} You should renew":}
+  notify {"Puppet CA expiring on ${facts['ca_exp_date']} You should renew, Please take a look at the Puppet CA_Extend Module (https://forge.puppet.com/puppetlabs/ca_extend)":}
 }
 
 
